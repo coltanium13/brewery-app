@@ -92,27 +92,17 @@ const runSearch = async () => {
   submittedQuery.value = nextQuery;
 };
 
-const isSubmitDisabled = computed(() => loading.value || !searchInput.value.trim());
+import { isSearchDisabled, getEmptyMessage, getStatusMessage } from '../utils/searchHelpers';
+
+const isSubmitDisabled = computed(() => isSearchDisabled(loading.value, searchInput.value));
 
 const errorMessage = computed(() => error.value?.message ?? '');
 
-const emptyMessage = computed(() => {
-  if (loading.value) {
-    return 'Searching breweries...';
-  }
+const emptyMessage = computed(() => 
+  getEmptyMessage(loading.value, submittedQuery.value)
+);
 
-  if (!submittedQuery.value.trim()) {
-    return 'Enter a search term to find breweries.';
-  }
-
-  return `No breweries found for “${submittedQuery.value}”.`;
-});
-
-const statusMessage = computed(() => {
-  if (loading.value) {
-    return 'Loading results...';
-  }
-
-  return `${breweries.value.length} breweries found`;
-});
+const statusMessage = computed(() => 
+  getStatusMessage(loading.value, breweries.value.length)
+);
 </script>

@@ -15,9 +15,11 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 type Documents = {
     "\n  query SearchBreweries($query: String!) {\n    search(query: $query) {\n      id\n      name\n      brewery_type\n      city\n      state\n      website_url\n    }\n  }\n": typeof types.SearchBreweriesDocument,
+    "\n  query FilterLocalBreweries($city: String!, $type: String!) {\n    filter(city: $city, type: $type) {\n      id\n      name\n      brewery_type\n      city\n      state\n      website_url\n    }\n  }\n": typeof types.FilterLocalBreweriesDocument,
 };
 const documents: Documents = {
     "\n  query SearchBreweries($query: String!) {\n    search(query: $query) {\n      id\n      name\n      brewery_type\n      city\n      state\n      website_url\n    }\n  }\n": types.SearchBreweriesDocument,
+    "\n  query FilterLocalBreweries($city: String!, $type: String!) {\n    filter(city: $city, type: $type) {\n      id\n      name\n      brewery_type\n      city\n      state\n      website_url\n    }\n  }\n": types.FilterLocalBreweriesDocument,
 };
 
 /**
@@ -38,6 +40,10 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query SearchBreweries($query: String!) {\n    search(query: $query) {\n      id\n      name\n      brewery_type\n      city\n      state\n      website_url\n    }\n  }\n"): (typeof documents)["\n  query SearchBreweries($query: String!) {\n    search(query: $query) {\n      id\n      name\n      brewery_type\n      city\n      state\n      website_url\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query FilterLocalBreweries($city: String!, $type: String!) {\n    filter(city: $city, type: $type) {\n      id\n      name\n      brewery_type\n      city\n      state\n      website_url\n    }\n  }\n"): (typeof documents)["\n  query FilterLocalBreweries($city: String!, $type: String!) {\n    filter(city: $city, type: $type) {\n      id\n      name\n      brewery_type\n      city\n      state\n      website_url\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
