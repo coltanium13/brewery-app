@@ -1,6 +1,6 @@
-import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
-import { RESTDataSource } from '@apollo/datasource-rest';
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import { RESTDataSource } from "@apollo/datasource-rest";
 
 interface Brewery {
   id: string;
@@ -16,7 +16,7 @@ interface Brewery {
 }
 
 class BreweryAPI extends RESTDataSource {
-  override baseURL = 'https://api.openbrewerydb.org/v1/';
+  override baseURL = "https://api.openbrewerydb.org/v1/";
 
   async searchBreweries(query: string): Promise<Brewery[]> {
     const trimmedQuery = query.trim();
@@ -25,14 +25,18 @@ class BreweryAPI extends RESTDataSource {
       return [];
     }
 
-    return this.get<Brewery[]>('breweries/search', {
+    return this.get<Brewery[]>("breweries/search", {
       params: {
         query: trimmedQuery,
+        per_page: "5",
       },
     });
   }
 
-  async filterBreweries(city: string, type?: string | null): Promise<Brewery[]> {
+  async filterBreweries(
+    city: string,
+    type?: string | null,
+  ): Promise<Brewery[]> {
     const trimmedCity = city.trim();
     const trimmedType = type?.trim();
 
@@ -40,10 +44,11 @@ class BreweryAPI extends RESTDataSource {
       return [];
     }
 
-    return this.get<Brewery[]>('breweries', {
+    return this.get<Brewery[]>("breweries", {
       params: {
         by_city: trimmedCity,
         ...(trimmedType ? { by_type: trimmedType } : {}),
+        per_page: "5",
       },
     });
   }
@@ -77,11 +82,22 @@ interface ContextValue {
 
 const resolvers = {
   Query: {
-    search: async (_parent: unknown, args: { query: string }, contextValue: ContextValue) => {
+    search: async (
+      _parent: unknown,
+      args: { query: string },
+      contextValue: ContextValue,
+    ) => {
       return contextValue.dataSources.breweryAPI.searchBreweries(args.query);
     },
-    filter: async (_parent: unknown, args: { city: string; type?: string | null }, contextValue: ContextValue) => {
-      return contextValue.dataSources.breweryAPI.filterBreweries(args.city, args.type);
+    filter: async (
+      _parent: unknown,
+      args: { city: string; type?: string | null },
+      contextValue: ContextValue,
+    ) => {
+      return contextValue.dataSources.breweryAPI.filterBreweries(
+        args.city,
+        args.type,
+      );
     },
   },
 };
@@ -107,6 +123,6 @@ startStandaloneServer(server, {
     console.log(`GraphQL server ready at ${url}`);
   })
   .catch((error: unknown) => {
-    console.error('Failed to start GraphQL server', error);
+    console.error("Failed to start GraphQL server", error);
     process.exit(1);
   });
